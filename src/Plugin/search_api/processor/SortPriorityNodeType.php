@@ -69,24 +69,19 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
+    $target_field_id = 'sort_priority_node_type_weight_field';
+    $weight = $this->configuration['weight'];
 
     $fields = $item->getFields();
-    $target_field_id = 'sort_priority_node_type_weight_field';
-    // TODO Add a check if Type field exists.
+    // TODO Add a check if Node Type field exists.
     $node_type = $fields['type']->getValues()[0];
 
-    // TODO Maybe define the default weight somewhere else.
-    $value = 100;
-
-    switch ($node_type) {
-      // TODO Add a loop that goes over the config factory settings.
-      // And set the weight correct for every node type.
-      case 'page':
-        $value = '1';
-        break;
+    if ($this->configuration['sorttable'][$node_type]['weight']) {
+      $weight = $this->configuration['sorttable'][$node_type]['weight'];
     }
+
     if (empty($item->getField($target_field_id)->getValues())) {
-      $item->getField($target_field_id)->addValue($value);
+      $item->getField($target_field_id)->addValue($weight);
     }
   }
 
@@ -112,17 +107,20 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
       }
     }
 
-    $form['sorttable'] = array(
+    $form['sorttable'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Node Type'), $this->t('Weight')],
-      '#tabledrag' => array(
-        array(
+      '#header' => [
+        $this->t('Node Type'),
+        $this->t('Weight')
+      ],
+      '#tabledrag' => [
+        [
           'action' => 'order',
           'relationship' => 'sibling',
           'group' => 'sorttable-order-weight',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     // Get a list of available node_types defined on this index.
     $datasources = $this->index->getDatasources();
@@ -131,22 +129,28 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
         if ($bundles = $datasource->getBundles()) {
           // Loop over each node type and create a form row.
           foreach ($bundles as $bundle_id => $bundle_name) {
+            $weight = $this->configuration['weight'];
+            if ($this->configuration['sorttable'][$bundle_id]['weight']) {
+              $weight = $this->configuration['sorttable'][$bundle_id]['weight'];
+            }
+
             // Add form with weights
-            // TableDrag: Mark the table row as draggable.
+            // Mark the table row as draggable.
             $form['sorttable'][$bundle_id]['#attributes']['class'][] = 'draggable';
 
-            // TableDrag: Sort the table row according to its existing/configured weight.
-            $form['sorttable'][$bundle_id]['#weight'] = $this->configuration['weight'];
+            // Sort the table row according to its existing/configured weight.
+            // TODO Check why the rows are not sorted by weight.
+            $form['sorttable'][$bundle_id]['#weight'] = $weight;
 
-            // Some table columns containing raw markup.
+            // Table columns containing raw markup.
             $form['sorttable'][$bundle_id]['label']['#plain_text'] = $bundle_name;
 
-            // TableDrag: Weight column element.
+            // Weight column element.
             $form['sorttable'][$bundle_id]['weight'] = [
               '#type' => 'weight',
               '#title' => t('Weight for @title', ['@title' => $bundle_name]),
               '#title_display' => 'invisible',
-              '#default_value' => $this->configuration['weight'],
+              '#default_value' => $weight,
               // Classify the weight element for #tabledrag.
               '#attributes' => ['class' => ['sorttable-order-weight']],
             ];
@@ -162,15 +166,7 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $weights = $form_state->getValues();
-    //ksm($weights);
-    foreach ($weights as $values) {
-      //ksm($values['page']);
-    }
-    //$this->setConfiguration($form_state->getValues());
+    $this->setConfiguration($form_state->getValues());
   }
-
-
-
 
 }

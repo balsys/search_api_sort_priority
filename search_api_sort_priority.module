@@ -38,20 +38,6 @@ function search_api_sort_priority_search_api_index_fields_validate($form, FormSt
     // Figure out a better way to query the processor for available fields.
     $target_field_id = 'contentbundle_weight';
 
-    // Field required to perform the processor.
-    // This field must be enabled inorder for the processor to work.
-    $required_field = 'type';
-
-    // Required field is missing.
-    if (!array_key_exists($required_field, $fields)) {
-      $form_state->setErrorByName($required_field, t(
-        '@parent field is missing or removed. Please add @parent field.',
-        [
-          '@parent' => $required_field,
-        ]
-      ));
-    }
-
     // Target field is missing.
     if (!array_key_exists($target_field_id, $fields)) {
       $form_state->setErrorByName($target_field_id, t(

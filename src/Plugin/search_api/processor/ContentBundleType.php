@@ -77,24 +77,19 @@ class ContentBundleType extends ProcessorPluginBase implements PluginFormInterfa
     // Get default weight.
     $weight = $this->configuration['weight'];
 
-    // Get all available fields for this item.
-    $fields = $item->getFields();
-
-    // Check if Content Bundle Type field exists.
-    // Check if Weight field exists.
-    if ($fields['type'] && $fields[$target_field_id]) {
-      $bundle_type = $fields['type']->getValues()[0];
+    // TODO We are only working with nodes for now.
+    if ($item->getDatasource()->getEntityTypeId() == 'node') {
+      $bundle_type = $item->getDatasource()->getItemBundle($item->getOriginalObject());
+      $fields = $this->getFieldsHelper()
+        ->filterForPropertyPath($item->getFields(), NULL, $target_field_id);
 
       // Get the weight assigned to content type
       if ($this->configuration['sorttable'][$bundle_type]['weight']) {
         $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
 
-      if (empty($item->getField($target_field_id)->getValues())) {
-        $item->getField($target_field_id)->addValue($weight);
-      }
+      $fields[$target_field_id]->addValue($weight);
     }
-
   }
 
   /**

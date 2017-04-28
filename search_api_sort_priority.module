@@ -40,12 +40,9 @@ function search_api_sort_priority_search_api_index_fields_validate($form, FormSt
 
     // Target field is missing.
     if (!array_key_exists($target_field_id, $fields)) {
-      $form_state->setErrorByName($target_field_id, t(
-        '@target field is missing or removed. Please add @target field.',
-        [
-          '@target' => $target_field_id,
-        ]
-      ));
+      drupal_set_message(t('<em>Sort Priority Content Bundle</em> Processor is enabled. Please
+      add <em>Sort Priority by Content Bundle</em> field to the index to use this
+      processor.'), 'warning');
     }
 
   }

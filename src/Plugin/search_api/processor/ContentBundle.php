@@ -13,12 +13,12 @@ use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 
 /**
- * Adds customized sort priority by Content Bundle Type.
+ * Adds customized sort priority by Content Bundle.
  *
  * @SearchApiProcessor(
- *   id = "contentbundletype",
- *   label = @Translation("Sort Priority by Content Bundle Type"),
- *   description = @Translation("Sort Priority by Content Bundle Type."),
+ *   id = "contentbundle",
+ *   label = @Translation("Sort Priority by Content Bundle"),
+ *   description = @Translation("Sort Priority by Content Bundle."),
  *   stages = {
  *     "add_properties" = 20,
  *   },
@@ -26,7 +26,7 @@ use Drupal\search_api\Plugin\PluginFormTrait;
  *   hidden = false,
  * )
  */
-class ContentBundleType extends ProcessorPluginBase implements PluginFormInterface {
+class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
@@ -55,9 +55,9 @@ class ContentBundleType extends ProcessorPluginBase implements PluginFormInterfa
     if (!$datasource) {
       $definition = [
         // TODO Come up with better label.
-        'label' => $this->t('Sort Priority - Content Bundle Type weight field'),
+        'label' => $this->t('Sort Priority - Content Bundle'),
         // TODO Come up with better description.
-        'description' => $this->t('Sort Priority - Content Bundle Type weight field.'),
+        'description' => $this->t('Sort Priority - Content Bundle.'),
         'type' => 'integer',
         'processor_id' => $this->getPluginId(),
       ];
@@ -105,7 +105,7 @@ class ContentBundleType extends ProcessorPluginBase implements PluginFormInterfa
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $parent_name = 'processors[contentbundletype][settings]';
+    $parent_name = 'processors[contentbundle][settings]';
     if (!empty($form['#parents'])) {
       $parents = $form['#parents'];
       $parent_name = $root = array_shift($parents);
@@ -117,7 +117,7 @@ class ContentBundleType extends ProcessorPluginBase implements PluginFormInterfa
     $form['sorttable'] = [
       '#type' => 'table',
       '#header' => [
-        $this->t('Content Bundle Type'),
+        $this->t('Content Bundle'),
         $this->t('Weight')
       ],
       '#tabledrag' => [
@@ -133,7 +133,6 @@ class ContentBundleType extends ProcessorPluginBase implements PluginFormInterfa
     $datasources = $this->index->getDatasources();
     foreach ($datasources as $datasource_id => $datasource) {
       // TODO Maybe this can be extended for non Node types?
-      // The real challenge is to determine the bundle type.
       if ($datasource->getEntityTypeId() == 'node') {
         if ($bundles = $datasource->getBundles()) {
           // Loop over each bundle type and create a form row.

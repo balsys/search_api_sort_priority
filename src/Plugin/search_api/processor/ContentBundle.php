@@ -21,6 +21,7 @@ use Drupal\search_api\Plugin\PluginFormTrait;
  *   description = @Translation("Sort Priority by Content Bundle."),
  *   stages = {
  *     "add_properties" = 20,
+ *     "pre_index_save" = 0,
  *   },
  *   locked = false,
  *   hidden = false,
@@ -60,6 +61,9 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
         'description' => $this->t('Sort Priority by Content Bundle.'),
         'type' => 'integer',
         'processor_id' => $this->getPluginId(),
+        // This will be a hidden field,
+        // not something a user can add/remove manually.
+        'hidden' => TRUE,
       ];
       $properties['contentbundle_weight'] = new ProcessorProperty($definition);
     }
@@ -180,4 +184,13 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
     processor.'), 'status');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function preIndexSave() {
+    // Automatically add field to index if processor is enabled.
+    $field = $this->ensureField(NULL, 'contentbundle_weight', 'integer');
+    // Hide the field.
+    $field->setHidden();
+  }
 }

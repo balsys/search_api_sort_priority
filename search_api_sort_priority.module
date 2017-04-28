@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file
+ * Search API Sort Priority module file.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\search_api\IndexInterface;
+
+/**
+ * Add search_api_sort_priority custom validator.
+ *
+ * Implements hook_form_FORM_ID_alter()
+ */
+function search_api_sort_priority_form_search_api_index_fields_alter(&$form, FormStateInterface $form_state) {
+  // Add a custom validate handler.
+  $form['actions']['submit']['#validate'][] = 'search_api_sort_priority_search_api_index_fields_validate';
+}
+
+/**
+ * Validate search_api_sort_priority.
+ */
+function search_api_sort_priority_search_api_index_fields_validate($form, FormStateInterface $form_state) {
+  $values = $form_state->getValues();
+  $fields = $values['fields'];
+
+  $entity = $form_state->getFormObject()->getEntity();
+  $processors = array_keys($entity->getProcessors());
+
+  // Check for all custom processors.
+  // Check the Bundle priority processor.
+  // TODO Investigate better place to add these validators
+  // Perhaps we can make a helper class with validation method per processor?
+  if (in_array('sortprioritybundletype', $processors)) {
+    // TODO This $target_field_id should come from the processor.
+    // Figure out a better way to query the processor for available fields.
+    $target_field_id = 'sort_priority_bundle_type_weight_field';
+
+    // Field required to perform the processor.
+    // This field must be enabled inorder for the processor to work.
+    $required_field = 'type';
+
+    // Required field is missing.
+    if (!array_key_exists($required_field, $fields)) {
+      $form_state->setErrorByName($required_field, t(
+        '@parent field is missing or removed. Please add @parent field.',
+        [
+          '@parent' => $required_field,
+        ]
+      ));
+    }
+
+    // Target field is missing.
+    if (!array_key_exists($target_field_id, $fields)) {
+      $form_state->setErrorByName($target_field_id, t(
+        '@target field is missing or removed. Please add @target field.',
+        [
+          '@target' => $target_field_id,
+        ]
+      ));
+    }
+
+  }
+
+  // TODO This is only for example purpose.
+  //if (in_array('sortpriorityroletype', $processors)) {
+    // TODO Add validation for user role priority
+  //}
+
+}

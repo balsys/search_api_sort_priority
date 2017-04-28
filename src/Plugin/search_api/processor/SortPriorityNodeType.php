@@ -70,19 +70,28 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
    */
   public function addFieldValues(ItemInterface $item) {
     $target_field_id = 'sort_priority_node_type_weight_field';
+
+    // Get default weight.
     $weight = $this->configuration['weight'];
 
+    // Get all available fields for this item.
     $fields = $item->getFields();
-    // TODO Add a check if Node Type field exists.
-    $node_type = $fields['type']->getValues()[0];
 
-    if ($this->configuration['sorttable'][$node_type]['weight']) {
-      $weight = $this->configuration['sorttable'][$node_type]['weight'];
+    // Check if Node Type field exists.
+    // Check if Weight field exists.
+    if ($fields['type'] && $fields[$target_field_id]) {
+      $node_type = $fields['type']->getValues()[0];
+
+      // Get the weight assigned to content type
+      if ($this->configuration['sorttable'][$node_type]['weight']) {
+        $weight = $this->configuration['sorttable'][$node_type]['weight'];
+      }
+
+      if (empty($item->getField($target_field_id)->getValues())) {
+        $item->getField($target_field_id)->addValue($weight);
+      }
     }
 
-    if (empty($item->getField($target_field_id)->getValues())) {
-      $item->getField($target_field_id)->addValue($weight);
-    }
   }
 
   /**

@@ -55,9 +55,9 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
     if (!$datasource) {
       $definition = [
         // TODO Come up with better label.
-        'label' => $this->t('Sort Priority - Content Bundle'),
+        'label' => $this->t('Sort Priority by Content Bundle'),
         // TODO Come up with better description.
-        'description' => $this->t('Sort Priority - Content Bundle.'),
+        'description' => $this->t('Sort Priority by Content Bundle.'),
         'type' => 'integer',
         'processor_id' => $this->getPluginId(),
       ];
@@ -176,7 +176,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $this->setConfiguration($form_state->getValues());
     drupal_set_message(t('<em>Sort Priority Content Bundle</em> Processor is enabled,
-    you may add the <em>Sort Priority Content Bundle</em> field to your index to use this
+    you may add the <em>Sort Priority by Content Bundle</em> field to your index to use this
     processor.'), 'status');
   }
 

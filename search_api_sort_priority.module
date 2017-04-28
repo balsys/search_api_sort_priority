@@ -33,7 +33,7 @@ function search_api_sort_priority_search_api_index_fields_validate($form, FormSt
   // Check the Bundle priority processor.
   // TODO Investigate better place to add these validators
   // Perhaps we can make a helper class with validation method per processor?
-  if (in_array('sortprioritybundletype', $processors)) {
+  if (in_array('contentbundle', $processors)) {
     // TODO This $target_field_id should come from the processor.
     // Figure out a better way to query the processor for available fields.
     $target_field_id = 'contentbundle_weight';

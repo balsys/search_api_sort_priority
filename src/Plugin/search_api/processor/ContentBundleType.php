@@ -13,12 +13,12 @@ use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 
 /**
- * Adds customized sort priority by Bundle Type.
+ * Adds customized sort priority by Content Bundle Type.
  *
  * @SearchApiProcessor(
- *   id = "sortprioritybundletype",
- *   label = @Translation("Sort Priority by Bundle Type"),
- *   description = @Translation("Sort Priority by Bundle Type."),
+ *   id = "contentbundletype",
+ *   label = @Translation("Sort Priority by Content Bundle Type"),
+ *   description = @Translation("Sort Priority by Content Bundle Type."),
  *   stages = {
  *     "add_properties" = 20,
  *   },
@@ -26,12 +26,12 @@ use Drupal\search_api\Plugin\PluginFormTrait;
  *   hidden = false,
  * )
  */
-class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormInterface {
+class ContentBundleType extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
   /**
-   * Can only be enabled for an index that indexes the bundle entity.
+   * Can only be enabled for an index that indexes the content bundle entity.
    *
    * {@inheritdoc}
    */
@@ -55,13 +55,13 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
     if (!$datasource) {
       $definition = [
         // TODO Come up with better label.
-        'label' => $this->t('Sort Priority - Bundle Type weight field'),
+        'label' => $this->t('Sort Priority - Content Bundle Type weight field'),
         // TODO Come up with better description.
-        'description' => $this->t('Sort Priority - Bundle Type weight field.'),
+        'description' => $this->t('Sort Priority - Content Bundle Type weight field.'),
         'type' => 'integer',
         'processor_id' => $this->getPluginId(),
       ];
-      $properties['sort_priority_bundle_type_weight_field'] = new ProcessorProperty($definition);
+      $properties['contentbundle_weight'] = new ProcessorProperty($definition);
     }
 
     return $properties;
@@ -72,7 +72,7 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
    */
   public function addFieldValues(ItemInterface $item) {
     // TODO Figure out a better way to identify this field.
-    $target_field_id = 'sort_priority_bundle_type_weight_field';
+    $target_field_id = 'contentbundle_weight';
 
     // Get default weight.
     $weight = $this->configuration['weight'];
@@ -80,7 +80,7 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
     // Get all available fields for this item.
     $fields = $item->getFields();
 
-    // Check if Bundle Type field exists.
+    // Check if Content Bundle Type field exists.
     // Check if Weight field exists.
     if ($fields['type'] && $fields[$target_field_id]) {
       $bundle_type = $fields['type']->getValues()[0];
@@ -110,7 +110,7 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $parent_name = 'processors[sortprioritybundletype][settings]';
+    $parent_name = 'processors[contentbundletype][settings]';
     if (!empty($form['#parents'])) {
       $parents = $form['#parents'];
       $parent_name = $root = array_shift($parents);
@@ -122,7 +122,7 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
     $form['sorttable'] = [
       '#type' => 'table',
       '#header' => [
-        $this->t('Bundle Type'),
+        $this->t('Content Bundle Type'),
         $this->t('Weight')
       ],
       '#tabledrag' => [

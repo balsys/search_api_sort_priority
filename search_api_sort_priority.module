@@ -36,7 +36,7 @@ function search_api_sort_priority_search_api_index_fields_validate($form, FormSt
   if (in_array('sortprioritybundletype', $processors)) {
     // TODO This $target_field_id should come from the processor.
     // Figure out a better way to query the processor for available fields.
-    $target_field_id = 'sort_priority_bundle_type_weight_field';
+    $target_field_id = 'contentbundle_weight';
 
     // Field required to perform the processor.
     // This field must be enabled inorder for the processor to work.

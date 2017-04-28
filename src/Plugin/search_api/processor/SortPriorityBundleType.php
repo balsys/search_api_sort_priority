@@ -13,12 +13,12 @@ use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 
 /**
- * Adds customized sort priority by Node Type.
+ * Adds customized sort priority by Bundle Type.
  *
  * @SearchApiProcessor(
- *   id = "sortprioritynodetype",
- *   label = @Translation("Sort Priority by Node Type"),
- *   description = @Translation("Sort Priority by Node Type."),
+ *   id = "sortprioritybundletype",
+ *   label = @Translation("Sort Priority by Bundle Type"),
+ *   description = @Translation("Sort Priority by Bundle Type."),
  *   stages = {
  *     "add_properties" = 20,
  *   },
@@ -26,12 +26,12 @@ use Drupal\search_api\Plugin\PluginFormTrait;
  *   hidden = false,
  * )
  */
-class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInterface {
+class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
   /**
-   * Can only be enabled for an index that indexes the node entity.
+   * Can only be enabled for an index that indexes the bundle entity.
    *
    * {@inheritdoc}
    */
@@ -53,13 +53,13 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
     if (!$datasource) {
       $definition = [
         // TODO Come up with better label.
-        'label' => $this->t('Sort Priority - Node Type weight field'),
+        'label' => $this->t('Sort Priority - Bundle Type weight field'),
         // TODO Come up with better description.
-        'description' => $this->t('Sort Priority - Node Type weight field.'),
+        'description' => $this->t('Sort Priority - Bundle Type weight field.'),
         'type' => 'integer',
         'processor_id' => $this->getPluginId(),
       ];
-      $properties['sort_priority_node_type_weight_field'] = new ProcessorProperty($definition);
+      $properties['sort_priority_bundle_type_weight_field'] = new ProcessorProperty($definition);
     }
 
     return $properties;
@@ -69,7 +69,8 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
-    $target_field_id = 'sort_priority_node_type_weight_field';
+    // TODO Figure out a better way to identify this field.
+    $target_field_id = 'sort_priority_bundle_type_weight_field';
 
     // Get default weight.
     $weight = $this->configuration['weight'];
@@ -77,14 +78,14 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
     // Get all available fields for this item.
     $fields = $item->getFields();
 
-    // Check if Node Type field exists.
+    // Check if Bundle Type field exists.
     // Check if Weight field exists.
     if ($fields['type'] && $fields[$target_field_id]) {
-      $node_type = $fields['type']->getValues()[0];
+      $bundle_type = $fields['type']->getValues()[0];
 
       // Get the weight assigned to content type
-      if ($this->configuration['sorttable'][$node_type]['weight']) {
-        $weight = $this->configuration['sorttable'][$node_type]['weight'];
+      if ($this->configuration['sorttable'][$bundle_type]['weight']) {
+        $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
 
       if (empty($item->getField($target_field_id)->getValues())) {
@@ -107,7 +108,7 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $parent_name = 'processors[sortprioritynodetype][settings]';
+    $parent_name = 'processors[sortprioritybundletype][settings]';
     if (!empty($form['#parents'])) {
       $parents = $form['#parents'];
       $parent_name = $root = array_shift($parents);
@@ -119,7 +120,7 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
     $form['sorttable'] = [
       '#type' => 'table',
       '#header' => [
-        $this->t('Node Type'),
+        $this->t('Bundle Type'),
         $this->t('Weight')
       ],
       '#tabledrag' => [
@@ -131,12 +132,12 @@ class SortPriorityNodeType extends ProcessorPluginBase implements PluginFormInte
       ],
     ];
 
-    // Get a list of available node_types defined on this index.
+    // Get a list of available bundle_types defined on this index.
     $datasources = $this->index->getDatasources();
     foreach ($datasources as $datasource_id => $datasource) {
       if ($datasource instanceof PluginFormInterface) { // TODO Not really sure what this does.
         if ($bundles = $datasource->getBundles()) {
-          // Loop over each node type and create a form row.
+          // Loop over each bundle type and create a form row.
           foreach ($bundles as $bundle_id => $bundle_name) {
             $weight = $this->configuration['weight'];
             if ($this->configuration['sorttable'][$bundle_id]['weight']) {

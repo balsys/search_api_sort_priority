@@ -175,6 +175,9 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $this->setConfiguration($form_state->getValues());
+    drupal_set_message(t('<em>Sort Priority Content Bundle</em> Processor is enabled,
+    you may add the <em>Sort Priority Content Bundle</em> field to your index to use this
+    processor.'), 'status');
   }
 
 }

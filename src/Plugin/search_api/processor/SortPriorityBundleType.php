@@ -37,6 +37,8 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
    */
   public static function supportsIndex(IndexInterface $index) {
     foreach ($index->getDatasources() as $datasource) {
+      // TODO Not really sure about this logic.
+      // Maybe peer review is required to check?
       if ($datasource->getEntityTypeId() == 'node') {
         return TRUE;
       }
@@ -135,7 +137,9 @@ class SortPriorityBundleType extends ProcessorPluginBase implements PluginFormIn
     // Get a list of available bundle_types defined on this index.
     $datasources = $this->index->getDatasources();
     foreach ($datasources as $datasource_id => $datasource) {
-      if ($datasource instanceof PluginFormInterface) { // TODO Not really sure what this does.
+      // TODO Maybe this can be extended for non Node types?
+      // The real challenge is to determine the bundle type.
+      if ($datasource->getEntityTypeId() == 'node') {
         if ($bundles = $datasource->getBundles()) {
           // Loop over each bundle type and create a form row.
           foreach ($bundles as $bundle_id => $bundle_name) {

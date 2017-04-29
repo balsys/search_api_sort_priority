@@ -31,6 +31,8 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
+  protected $target_field_id = 'contentbundle_weight';
+
   /**
    * Can only be enabled for an index that indexes the content bundle entity.
    *
@@ -38,8 +40,6 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
    */
   public static function supportsIndex(IndexInterface $index) {
     foreach ($index->getDatasources() as $datasource) {
-      // TODO Not really sure about this logic.
-      // Maybe peer review is required to check?
       if ($datasource->getEntityTypeId() == 'node') {
         return TRUE;
       }
@@ -65,7 +65,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
         // not something a user can add/remove manually.
         'hidden' => TRUE,
       ];
-      $properties['contentbundle_weight'] = new ProcessorProperty($definition);
+      $properties[$this->target_field_id] = new ProcessorProperty($definition);
     }
 
     return $properties;
@@ -75,9 +75,6 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
-    // TODO Figure out a better way to identify this field.
-    $target_field_id = 'contentbundle_weight';
-
     // Get default weight.
     $weight = $this->configuration['weight'];
 
@@ -85,14 +82,14 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
     if ($item->getDatasource()->getEntityTypeId() == 'node') {
       $bundle_type = $item->getDatasource()->getItemBundle($item->getOriginalObject());
       $fields = $this->getFieldsHelper()
-        ->filterForPropertyPath($item->getFields(), NULL, $target_field_id);
+        ->filterForPropertyPath($item->getFields(), NULL, $this->target_field_id);
 
       // Get the weight assigned to content type
       if ($this->configuration['sorttable'][$bundle_type]['weight']) {
         $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
 
-      $fields[$target_field_id]->addValue($weight);
+      $fields[$this->target_field_id]->addValue($weight);
     }
   }
 
@@ -186,7 +183,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
    */
   public function preIndexSave() {
     // Automatically add field to index if processor is enabled.
-    $field = $this->ensureField(NULL, 'contentbundle_weight', 'integer');
+    $field = $this->ensureField(NULL, $this->target_field_id, 'integer');
     // Hide the field.
     $field->setHidden();
   }

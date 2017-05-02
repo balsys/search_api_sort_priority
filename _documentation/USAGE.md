@@ -5,8 +5,8 @@
 #### 1: Enable the Sort Priority by Content Bundle Processor
 ![enable-processor](images/enable-processor.jpg)
 
-#### 2: Add the required fields to Index
-![add-fields](images/add-fields.jpg)
+#### 2: Save the processor
+This will create all the required fields and you are ready to go.
 
-#### 3: Review fields and save
-![review-fields](images/review-fields.jpg)
+#### 3: New weight field
+A new field named *contentbundle_weight* is ready for you to add to views, or use as you see fit. This field contains the weight assigned to Content Bundles.

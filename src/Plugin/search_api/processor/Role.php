@@ -1,4 +1,4 @@
-role_namerole<?php
+<?php
 
 namespace Drupal\search_api_sort_priority\Plugin\search_api\processor;
 
@@ -11,6 +11,10 @@ use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
+
+use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
+use Drupal\Component\Utility\Html;
 
 /**
  * Adds customized sort priority by Role.
@@ -79,7 +83,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
     $weight = $this->configuration['weight'];
 
     // TODO We are only working with nodes for now.
-    if ($item->getDatasource()->getEntityTypeId() == 'node') {
+    /*if ($item->getDatasource()->getEntityTypeId() == 'node') {
       $role_id = $item->getDatasource()->getItemBundle($item->getOriginalObject());
       $fields = $this->getFieldsHelper()
         ->filterForPropertyPath($item->getFields(), NULL, $this->target_field_id);
@@ -90,7 +94,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
       }
 
       $fields[$this->target_field_id]->addValue($weight);
-    }
+    }*/
   }
 
   /**
@@ -130,42 +134,37 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
       ],
     ];
 
-    // Get a list of available roles defined on this index.
-    $datasources = $this->index->getDatasources();
-    foreach ($datasources as $datasource_id => $datasource) {
-      // TODO Maybe this can be extended for non Node types?
-      if ($datasource->getEntityTypeId() == 'node') {
-        if ($roles = $datasource->getBundles()) {
-          // Loop over each role and create a form row.
-          foreach ($roles as $role_id => $role_name) {
-            $weight = $this->configuration['weight'];
-            if ($this->configuration['sorttable'][$role_id]['weight']) {
-              $weight = $this->configuration['sorttable'][$role_id]['weight'];
-            }
+    $roles = array_map(function (RoleInterface $role) {
+      return Html::escape($role->label());
+    }, user_roles());
 
-            // Add form with weights
-            // Mark the table row as draggable.
-            $form['sorttable'][$role_id]['#attributes']['class'][] = 'draggable';
-
-            // Sort the table row according to its existing/configured weight.
-            // TODO Check why the rows are not sorted by weight.
-            $form['sorttable'][$role_id]['#weight'] = $weight;
-
-            // Table columns containing raw markup.
-            $form['sorttable'][$role_id]['label']['#plain_text'] = $role_name;
-
-            // Weight column element.
-            $form['sorttable'][$role_id]['weight'] = [
-              '#type' => 'weight',
-              '#title' => t('Weight for @title', ['@title' => $role_name]),
-              '#title_display' => 'invisible',
-              '#default_value' => $weight,
-              // Classify the weight element for #tabledrag.
-              '#attributes' => ['class' => ['sorttable-order-weight']],
-            ];
-          }
-        }
+    // Loop over each role and create a form row.
+    foreach ($roles as $role_id => $role_name) {
+      $weight = $this->configuration['weight'];
+      if ($this->configuration['sorttable'][$role_id]['weight']) {
+        $weight = $this->configuration['sorttable'][$role_id]['weight'];
       }
+
+      // Add form with weights
+      // Mark the table row as draggable.
+      $form['sorttable'][$role_id]['#attributes']['class'][] = 'draggable';
+
+      // Sort the table row according to its existing/configured weight.
+      // TODO Check why the rows are not sorted by weight.
+      $form['sorttable'][$role_id]['#weight'] = $weight;
+
+      // Table columns containing raw markup.
+      $form['sorttable'][$role_id]['label']['#plain_text'] = $role_name;
+
+      // Weight column element.
+      $form['sorttable'][$role_id]['weight'] = [
+        '#type' => 'weight',
+        '#title' => t('Weight for @title', ['@title' => $role_name]),
+        '#title_display' => 'invisible',
+        '#default_value' => $weight,
+        // Classify the weight element for #tabledrag.
+        '#attributes' => ['class' => ['sorttable-order-weight']],
+      ];
     }
 
     return $form;

@@ -1,7 +1,10 @@
 # Search API Sort Priority
-This module allows site admins to configure custom sort priority for Search API Results.
+This module allows site admins to configure custom sort priority for Search API Results. There are a number of Search API processors that allow a configurable weights.
 
-## Sort Priority Content Bundle Processor
+![search-api-sort-priority](_documentation/images/contentbundlepriority.jpg)
+
+## Search API Processors
+### Sort priority by Content Bundle
 If you have a website with multiple Content Bundles and you would like to sort the results by assigning arbitrary priority to each bundle type.
 
 This filter allows sorting of search results by weight assigned to each Content Bundle.
@@ -11,7 +14,13 @@ Example: Sort results in the following priority order:
 * Article
 * Basic Page
 
-![search-api-sort-priority](_documentation/images/contentbundlepriority.jpg)
+### Sort Priority by Role
+This processor allows Roles to be assigned weights, so allows the possibility to sort content by "Admin" role higher than "Editor".
+
+Example: Sort results in the following Role priority order:
+* Admin
+* Editor
+* Member
 
 ## Project Code
 

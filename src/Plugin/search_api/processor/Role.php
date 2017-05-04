@@ -37,7 +37,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $target_field_id = 'role_weight';
+  protected $targetFieldId = 'role_weight';
 
   /**
    * Can only be enabled for an index that indexes user related entity.
@@ -71,7 +71,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
         // not something a user can add/remove manually.
         'hidden' => TRUE,
       ];
-      $properties[$this->target_field_id] = new ProcessorProperty($definition);
+      $properties[$this->targetFieldId] = new ProcessorProperty($definition);
     }
 
     return $properties;
@@ -92,7 +92,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
     }
 
     $fields = $this->getFieldsHelper()
-      ->filterForPropertyPath($item->getFields(), NULL, $this->target_field_id);
+      ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
 
     // TODO Extend for other entities.
     switch ($entity_type_id) {
@@ -118,7 +118,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
         $highest_role_weight = array_values($role_weights)[0];
 
         // Set the value for target field.
-        $fields[$this->target_field_id]->addValue($highest_role_weight['weight']);
+        $fields[$this->targetFieldId]->addValue($highest_role_weight['weight']);
         break;
     }
 
@@ -214,7 +214,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
    */
   public function preIndexSave() {
     // Automatically add field to index if processor is enabled.
-    $field = $this->ensureField(NULL, $this->target_field_id, 'integer');
+    $field = $this->ensureField(NULL, $this->targetFieldId, 'integer');
     // Hide the field.
     $field->setHidden();
   }

@@ -11,10 +11,12 @@ use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
-
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\node\NodeInterface;
+use Drupal\Core\TypedData\ComplexDataInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Adds customized sort priority by Role.
@@ -82,19 +84,44 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
     // Get default weight.
     $weight = $this->configuration['weight'];
 
-    // TODO We are only working with nodes for now.
-    /*if ($item->getDatasource()->getEntityTypeId() == 'node') {
-      $role_id = $item->getDatasource()->getItemBundle($item->getOriginalObject());
-      $fields = $this->getFieldsHelper()
-        ->filterForPropertyPath($item->getFields(), NULL, $this->target_field_id);
+    // Only run for node and comment items.
+    // TODO Extend for other entities.
+    $entity_type_id = $item->getDatasource()->getEntityTypeId();
+    if (!in_array($entity_type_id, $this->configuration['allowed_entity_types'])) {
+      return;
+    }
 
-      // Get the weight assigned to role
-      if ($this->configuration['sorttable'][$role_id]['weight']) {
-        $weight = $this->configuration['sorttable'][$role_id]['weight'];
-      }
+    $fields = $this->getFieldsHelper()
+      ->filterForPropertyPath($item->getFields(), NULL, $this->target_field_id);
 
-      $fields[$this->target_field_id]->addValue($weight);
-    }*/
+    // TODO Extend for other entities.
+    switch ($entity_type_id) {
+      case 'node':
+        // Get the node object.
+        $node = $this->getNode($item->getOriginalObject());
+
+        // Get the user associated with this node.
+        $user = User::load($node->getOwnerId());
+
+        // Get user roles.
+        $user_roles = $user->getRoles();
+
+        // Construct array for role sorting.
+        foreach ($user_roles as $role_id) {
+          $weight = $this->configuration['sorttable'][$role_id]['weight'];
+          $role_weights[$role_id]['role'] = $role_id;
+          $role_weights[$role_id]['weight'] = $weight;
+        }
+
+        // Sort the roles by weight.
+        uasort($role_weights, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+        $highest_role_weight = array_values($role_weights)[0];
+
+        // Set the value for target field.
+        $fields[$this->target_field_id]->addValue($highest_role_weight['weight']);
+        break;
+    }
+
   }
 
   /**
@@ -103,6 +130,10 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
   public function defaultConfiguration() {
     return [
       'weight' => 0,
+      'allowed_entity_types' => [
+        'node',
+        'comment',
+      ],
     ];
   }
 
@@ -134,13 +165,14 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
       ],
     ];
 
+    $master_roles = user_roles();
     $roles = array_map(function (RoleInterface $role) {
       return Html::escape($role->label());
-    }, user_roles());
+    }, $master_roles);
 
     // Loop over each role and create a form row.
     foreach ($roles as $role_id => $role_name) {
-      $weight = $this->configuration['weight'];
+      $weight = $master_roles[$role_id]->getWeight();
       if ($this->configuration['sorttable'][$role_id]['weight']) {
         $weight = $this->configuration['sorttable'][$role_id]['weight'];
       }
@@ -186,4 +218,29 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
     // Hide the field.
     $field->setHidden();
   }
+
+  /**
+   * Retrieves the node related to an indexed search object.
+   *
+   * Will be either the node itself, or the node the comment is attached to.
+   *
+   * @param \Drupal\Core\TypedData\ComplexDataInterface $item
+   *   A search object that is being indexed.
+   *
+   * @return \Drupal\node\NodeInterface|null
+   *   The node related to that search object.
+   */
+  protected function getNode(ComplexDataInterface $item) {
+    $item = $item->getValue();
+    if ($item instanceof CommentInterface) {
+      $item = $item->getCommentedEntity();
+    }
+    if ($item instanceof NodeInterface) {
+      return $item;
+    }
+
+    return NULL;
+  }
+
+
 }

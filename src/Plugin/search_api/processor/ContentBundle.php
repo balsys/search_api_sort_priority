@@ -84,7 +84,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
       $fields = $this->getFieldsHelper()
         ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
 
-      // Get the weight assigned to content type
+      // Get the weight assigned to content type.
       if ($this->configuration['sorttable'][$bundle_type]['weight']) {
         $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
@@ -119,7 +119,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
       '#type' => 'table',
       '#header' => [
         $this->t('Content Bundle'),
-        $this->t('Weight')
+        $this->t('Weight'),
       ],
       '#tabledrag' => [
         [
@@ -187,4 +187,5 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
     // Hide the field.
     $field->setHidden();
   }
+
 }

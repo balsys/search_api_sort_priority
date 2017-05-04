@@ -154,7 +154,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
       '#type' => 'table',
       '#header' => [
         $this->t('Role'),
-        $this->t('Weight')
+        $this->t('Weight'),
       ],
       '#tabledrag' => [
         [
@@ -241,6 +241,5 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
 
     return NULL;
   }
-
 
 }

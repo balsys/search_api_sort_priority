@@ -168,12 +168,25 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
       return Html::escape($role->label());
     }, $master_roles);
 
-    // Loop over each role and create a form row.
+    // Make a dummy array to add custom weight.
     foreach ($roles as $role_id => $role_name) {
       $weight = $master_roles[$role_id]->getWeight();
       if ($this->configuration['sorttable'][$role_id]['weight']) {
         $weight = $this->configuration['sorttable'][$role_id]['weight'];
       }
+
+      $role_weight[$role_id]['bundle_id'] = $role_id;
+      $role_weight[$role_id]['bundle_name'] = $role_name;
+      $role_weight[$role_id]['weight'] = $weight;
+    }
+
+    // Sort weights.
+    uasort($role_weight, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+
+    // Loop over each role and create a form row.
+    foreach ($role_weight as $role_id => $role) {
+      $weight = $role['weight'];
+      $role_name = $role['bundle_name'];
 
       // Add form with weights
       // Mark the table row as draggable.

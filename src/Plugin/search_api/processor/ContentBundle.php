@@ -135,12 +135,25 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
       // TODO Maybe this can be extended for non Node types?
       if ($datasource->getEntityTypeId() == 'node') {
         if ($bundles = $datasource->getBundles()) {
-          // Loop over each bundle type and create a form row.
+          // Make a dummy array to add custom weight.
           foreach ($bundles as $bundle_id => $bundle_name) {
             $weight = $this->configuration['weight'];
             if ($this->configuration['sorttable'][$bundle_id]['weight']) {
               $weight = $this->configuration['sorttable'][$bundle_id]['weight'];
             }
+
+            $bundle_weight[$bundle_id]['bundle_id'] = $bundle_id;
+            $bundle_weight[$bundle_id]['bundle_name'] = $bundle_name;
+            $bundle_weight[$bundle_id]['weight'] = $weight;
+          }
+
+          // Sort weights.
+          uasort($bundle_weight, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+
+          // Loop over each bundle and create a form row.
+          foreach ($bundle_weight as $bundle_id => $bundle) {
+            $weight = $bundle['weight'];
+            $bundle_name = $bundle['bundle_name'];
 
             // Add form with weights
             // Mark the table row as draggable.
@@ -163,9 +176,11 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
               '#attributes' => ['class' => ['sorttable-order-weight']],
             ];
           }
+
         }
       }
     }
+
 
     return $form;
   }

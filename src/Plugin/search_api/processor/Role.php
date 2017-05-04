@@ -42,14 +42,14 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
    *
    * {@inheritdoc}
    */
-  /*public static function supportsIndex(IndexInterface $index) {
+  public static function supportsIndex(IndexInterface $index) {
     foreach ($index->getDatasources() as $datasource) {
       if ($datasource->getEntityTypeId() == 'node') {
         return TRUE;
       }
     }
     return FALSE;
-  }*/
+  }
 
   /**
    * {@inheritdoc}

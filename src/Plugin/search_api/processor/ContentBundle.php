@@ -148,7 +148,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
           }
 
           // Sort weights.
-          uasort($bundle_weight, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+          uasort($bundle_weight, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
 
           // Loop over each bundle and create a form row.
           foreach ($bundle_weight as $bundle_id => $bundle) {
@@ -180,8 +180,6 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
         }
       }
     }
-
-
     return $form;
   }
 

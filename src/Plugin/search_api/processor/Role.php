@@ -112,7 +112,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
         }
 
         // Sort the roles by weight.
-        uasort($role_weights, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+        uasort($role_weights, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
         $highest_role_weight = array_values($role_weights)[0];
 
         // Set the value for target field.
@@ -181,7 +181,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
     }
 
     // Sort weights.
-    uasort($role_weight, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+    uasort($role_weight, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
 
     // Loop over each role and create a form row.
     foreach ($role_weight as $role_id => $role) {

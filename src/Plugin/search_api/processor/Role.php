@@ -171,7 +171,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
     // Make a dummy array to add custom weight.
     foreach ($roles as $role_id => $role_name) {
       $weight = $master_roles[$role_id]->getWeight();
-      if ($this->configuration['sorttable'][$role_id]['weight']) {
+      if (isset($this->configuration['sorttable']) && isset($this->configuration['sorttable'][$role_id]['weight'])) {
         $weight = $this->configuration['sorttable'][$role_id]['weight'];
       }
 

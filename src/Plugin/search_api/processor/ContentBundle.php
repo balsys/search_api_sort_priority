@@ -138,7 +138,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
           // Make a dummy array to add custom weight.
           foreach ($bundles as $bundle_id => $bundle_name) {
             $weight = $this->configuration['weight'];
-            if ($this->configuration['sorttable'][$bundle_id]['weight']) {
+            if (isset($this->configuration['sorttable']) && isset($this->configuration['sorttable'][$bundle_id]['weight'])) {
               $weight = $this->configuration['sorttable'][$bundle_id]['weight'];
             }
 

@@ -22,6 +22,16 @@ Example: Sort results in the following Role priority order:
 * Editor
 * Member
 
+### Sort Priority by Media Bundle
+If you have a website with multiple Media Bundles and you would like to sort the results by assigning arbitrary priority to each bundle type.
+
+This filter allows sorting of search results by weight assigned to each Media Bundle.
+
+Example: Sort results in the following priority order:
+* Flickr
+* Facebook
+* Instagram
+
 ## Project Code
 
 * GitHub

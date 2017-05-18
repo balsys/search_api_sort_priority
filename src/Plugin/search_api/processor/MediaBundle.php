@@ -30,7 +30,7 @@ class MediaBundle extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $targetFieldId = 'mediabundle_weight';
+  protected $targetFieldId = 'search_api_mediabundle_weight';
 
   /**
    * Can only be enabled for an index that indexes the media bundle entity.

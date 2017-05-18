@@ -35,7 +35,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $targetFieldId = 'role_weight';
+  protected $targetFieldId = 'search_api_role_weight';
 
   /**
    * Can only be enabled for an index that indexes user related entity.

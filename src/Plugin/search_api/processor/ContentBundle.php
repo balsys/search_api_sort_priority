@@ -30,7 +30,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $targetFieldId = 'contentbundle_weight';
+  protected $targetFieldId = 'search_api_contentbundle_weight';
 
   /**
    * Can only be enabled for an index that indexes the content bundle entity.

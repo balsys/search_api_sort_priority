@@ -35,7 +35,7 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $targetFieldId = 'search_api_role_weight';
+  protected $targetFieldId = 'role_weight';
 
   /**
    * Can only be enabled for an index that indexes user related entity.
@@ -115,8 +115,10 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
         uasort($role_weights, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
         $highest_role_weight = array_values($role_weights)[0];
 
-        // Set the value for target field.
-        $fields[$this->targetFieldId]->addValue($highest_role_weight['weight']);
+        // Set the weight on all the configured fields.
+        foreach ($fields as $field) {
+          $field->addValue($highest_role_weight['weight']);
+        }
         break;
     }
 

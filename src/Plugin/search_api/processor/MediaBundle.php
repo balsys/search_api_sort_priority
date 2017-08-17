@@ -30,7 +30,7 @@ class MediaBundle extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $targetFieldId = 'search_api_mediabundle_weight';
+  protected $targetFieldId = 'mediabundle_weight';
 
   /**
    * Can only be enabled for an index that indexes the media bundle entity.
@@ -80,15 +80,18 @@ class MediaBundle extends ProcessorPluginBase implements PluginFormInterface {
     // TODO We are only working with medias for now.
     if ($item->getDatasource()->getEntityTypeId() == 'media') {
       $bundle_type = $item->getDatasource()->getItemBundle($item->getOriginalObject());
-      $fields = $this->getFieldsHelper()
-        ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
 
       // Get the weight assigned to content type.
       if ($this->configuration['sorttable'][$bundle_type]['weight']) {
         $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
 
-      $fields[$this->targetFieldId]->addValue($weight);
+      // Set the weight on all the configured fields.
+      $fields = $this->getFieldsHelper()
+        ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
+      foreach ($fields as $field) {
+        $field->addValue($weight);
+      }
     }
   }
 

@@ -30,7 +30,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
-  protected $targetFieldId = 'search_api_contentbundle_weight';
+  protected $targetFieldId = 'contentbundle_weight';
 
   /**
    * Can only be enabled for an index that indexes the content bundle entity.
@@ -80,15 +80,18 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
     // TODO We are only working with nodes for now.
     if ($item->getDatasource()->getEntityTypeId() == 'node') {
       $bundle_type = $item->getDatasource()->getItemBundle($item->getOriginalObject());
-      $fields = $this->getFieldsHelper()
-        ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
 
       // Get the weight assigned to content type.
       if ($this->configuration['sorttable'][$bundle_type]['weight']) {
         $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
 
-      $fields[$this->targetFieldId]->addValue($weight);
+      // Set the weight on all the configured fields.
+      $fields = $this->getFieldsHelper()
+        ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
+      foreach ($fields as $field) {
+        $field->addValue($weight);
+      }
     }
   }
 

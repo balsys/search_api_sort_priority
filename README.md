@@ -32,6 +32,16 @@ Example: Sort results in the following priority order:
 * Facebook
 * Instagram
 
+### Sort Priority by Paragraph Bundle
+If you have a website with multiple Paragraph Bundles and you would like to sort the results by assigning arbitrary priority to each bundle type.
+
+This filter allows sorting of search results by weight assigned to each Paragraph Bundle.
+
+Example: Sort results in the following priority order:
+* Attached File	
+* Inset text
+* Hero Image
+
 ## Project Code
 
 * GitHub

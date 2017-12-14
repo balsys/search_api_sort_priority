@@ -141,14 +141,6 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $parent_name = 'processors[role][settings]';
-    if (!empty($form['#parents'])) {
-      $parents = $form['#parents'];
-      $parent_name = $root = array_shift($parents);
-      if ($parents) {
-        $parent_name = $root . '[' . implode('][', $parents) . ']';
-      }
-    }
 
     $form['sorttable'] = [
       '#type' => 'table',
@@ -195,7 +187,6 @@ class Role extends ProcessorPluginBase implements PluginFormInterface {
       $form['sorttable'][$role_id]['#attributes']['class'][] = 'draggable';
 
       // Sort the table row according to its existing/configured weight.
-      // TODO Check why the rows are not sorted by weight.
       $form['sorttable'][$role_id]['#weight'] = $weight;
 
       // Table columns containing raw markup.

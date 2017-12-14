@@ -108,14 +108,6 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $parent_name = 'processors[contentbundle][settings]';
-    if (!empty($form['#parents'])) {
-      $parents = $form['#parents'];
-      $parent_name = $root = array_shift($parents);
-      if ($parents) {
-        $parent_name = $root . '[' . implode('][', $parents) . ']';
-      }
-    }
 
     $form['sorttable'] = [
       '#type' => 'table',
@@ -163,7 +155,6 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
             $form['sorttable'][$bundle_id]['#attributes']['class'][] = 'draggable';
 
             // Sort the table row according to its existing/configured weight.
-            // TODO Check why the rows are not sorted by weight.
             $form['sorttable'][$bundle_id]['#weight'] = $weight;
 
             // Table columns containing raw markup.

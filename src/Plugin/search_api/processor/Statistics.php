@@ -10,11 +10,9 @@ use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
-use Drupal\user\RoleInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\node\NodeInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
-use Drupal\user\Entity\User;
 
 /**
  * Adds customized sort priority by Statistics.
@@ -83,7 +81,6 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
     $weight = $this->configuration['weight'];
 
     // Only run for node and comment items.
-    // TODO Extend for other entities.
     $entity_type_id = $item->getDatasource()->getEntityTypeId();
     if (!in_array($entity_type_id, $this->configuration['allowed_entity_types'])) {
       return;
@@ -92,14 +89,16 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
     $fields = $this->getFieldsHelper()
       ->filterForPropertyPath($item->getFields(), NULL, $this->targetFieldId);
 
-    // TODO Extend for other entities.
     switch ($entity_type_id) {
       case 'node':
+        // TODO Get statistics for this node
+        // $nodeTotalCount
 
-
+        // TODO
         // Set the weight on all the configured fields.
         foreach ($fields as $field) {
-          $field->addValue($highest_role_weight['weight']);
+          // TODO update this.
+          $field->addValue($nodeTotalCount['totalcount']);
         }
         break;
     }

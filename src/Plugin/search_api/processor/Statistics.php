@@ -10,9 +10,9 @@ use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
-use Drupal\Component\Utility\Html;
 use Drupal\node\NodeInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
+use Drupal\statistics\StatisticsViewsResult;
 
 /**
  * Adds customized sort priority by Statistics.
@@ -94,14 +94,11 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
         // Get the node object.
         $node = $this->getNode($item->getOriginalObject());
 
-        // TODO Get statistics for this node
-        // $nodeTotalCount
-        $nodeStatistics = statistics_get($node->nid);
+        // Get statistics for this node
+        $nodeStatistics = $this->statistics_get($node->id());
 
-        // TODO
         // Set the weight on all the configured fields.
         foreach ($fields as $field) {
-          // TODO update this.
           $field->addValue($nodeStatistics['totalcount']);
         }
         break;
@@ -115,6 +112,9 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
   public function defaultConfiguration() {
     return [
       'weight' => 0,
+      'totalcount' => 0,
+      'daycount' => 0,
+      'timestamp' => 0,
       'allowed_entity_types' => [
         'node',
       ],
@@ -131,13 +131,24 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
     $field->setHidden();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    return [];
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+
+  }
 
   /**
    * Retrieves a node's "view statistics".
    *
-   * @deprecated in Drupal 8.2.x, will be removed before Drupal 9.0.0.
-   *   Use \Drupal::service('statistics.storage.node')->fetchView($id).
+   * see statistics.module
    */
   function statistics_get($id) {
     if ($id > 0) {
@@ -148,9 +159,9 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
       // passed in.
       if (!($statistics instanceof StatisticsViewsResult)) {
         return [
-          'totalcount' => 0,
-          'daycount' => 0,
-          'timestamp' => 0,
+          'totalcount' => $this->configuration['totalcount'],
+          'daycount' => $this->configuration['daycount'],
+          'timestamp' => $this->configuration['timestamp'],
         ];
       }
 
@@ -175,13 +186,11 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
    */
   protected function getNode(ComplexDataInterface $item) {
     $item = $item->getValue();
-    if ($item instanceof CommentInterface) {
-      $item = $item->getCommentedEntity();
-    }
     if ($item instanceof NodeInterface) {
       return $item;
     }
 
     return NULL;
   }
+
 }

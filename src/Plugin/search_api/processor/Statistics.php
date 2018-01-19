@@ -91,14 +91,18 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
 
     switch ($entity_type_id) {
       case 'node':
+        // Get the node object.
+        $node = $this->getNode($item->getOriginalObject());
+
         // TODO Get statistics for this node
         // $nodeTotalCount
+        $nodeStatistics = statistics_get($node->nid);
 
         // TODO
         // Set the weight on all the configured fields.
         foreach ($fields as $field) {
           // TODO update this.
-          $field->addValue($nodeTotalCount['totalcount']);
+          $field->addValue($nodeStatistics['totalcount']);
         }
         break;
     }
@@ -127,4 +131,57 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
     $field->setHidden();
   }
 
+
+
+  /**
+   * Retrieves a node's "view statistics".
+   *
+   * @deprecated in Drupal 8.2.x, will be removed before Drupal 9.0.0.
+   *   Use \Drupal::service('statistics.storage.node')->fetchView($id).
+   */
+  function statistics_get($id) {
+    if ($id > 0) {
+      /** @var \Drupal\statistics\StatisticsViewsResult $statistics */
+      $statistics = \Drupal::service('statistics.storage.node')->fetchView($id);
+
+      // For backwards compatibility, return FALSE if an invalid node ID was
+      // passed in.
+      if (!($statistics instanceof StatisticsViewsResult)) {
+        return [
+          'totalcount' => 0,
+          'daycount' => 0,
+          'timestamp' => 0,
+        ];
+      }
+
+      return [
+        'totalcount' => $statistics->getTotalCount(),
+        'daycount' => $statistics->getDayCount(),
+        'timestamp' => $statistics->getTimestamp(),
+      ];
+    }
+  }
+
+  /**
+   * Retrieves the node related to an indexed search object.
+   *
+   * Will be either the node itself, or the node the comment is attached to.
+   *
+   * @param \Drupal\Core\TypedData\ComplexDataInterface $item
+   *   A search object that is being indexed.
+   *
+   * @return \Drupal\node\NodeInterface|null
+   *   The node related to that search object.
+   */
+  protected function getNode(ComplexDataInterface $item) {
+    $item = $item->getValue();
+    if ($item instanceof CommentInterface) {
+      $item = $item->getCommentedEntity();
+    }
+    if ($item instanceof NodeInterface) {
+      return $item;
+    }
+
+    return NULL;
+  }
 }

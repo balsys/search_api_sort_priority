@@ -10,7 +10,6 @@ use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
-use Drupal\Core\Database\Connection;
 
 /**
  * Adds customized sort priority by File mime.
@@ -80,12 +79,11 @@ class FileMime extends ProcessorPluginBase implements PluginFormInterface {
 
     // We are only working with files for now.
     if ($item->getDatasource()->getEntityTypeId() == 'file') {
-      // TODO change to mime.
-      $bundle_type = $item->getDatasource()->getItemBundle($item->getOriginalObject());
+      $mimeType = $item->getOriginalObject()->getValue()->getMimeType();
 
       // Get the weight assigned to content type.
-      if ($this->configuration['sorttable'][$bundle_type]['weight']) {
-        $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
+      if ($this->configuration['sorttable'][$mimeType]['weight']) {
+        $weight = $this->configuration['sorttable'][$mimeType]['weight'];
       }
 
       // Set the weight on all the configured fields.
@@ -130,7 +128,6 @@ class FileMime extends ProcessorPluginBase implements PluginFormInterface {
     $datasources = $this->index->getDatasources();
 
     foreach ($datasources as $datasource_id => $datasource) {
-      // TODO Maybe this can be extended for non Node types?
       if ($datasource->getEntityTypeId() == 'file') {
 
         $mimeTypes = $this->getAvailableMimes();

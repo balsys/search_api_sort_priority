@@ -77,9 +77,6 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
-    // Get default weight.
-    $weight = $this->configuration['weight'];
-
     // Only run for node and comment items.
     $entity_type_id = $item->getDatasource()->getEntityTypeId();
     if (!in_array($entity_type_id, $this->configuration['allowed_entity_types'])) {
@@ -94,8 +91,8 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
         // Get the node object.
         $node = $this->getNode($item->getOriginalObject());
 
-        // Get statistics for this node
-        $nodeStatistics = $this->statistics_get($node->id());
+        // Get statistics for this node.
+        $nodeStatistics = $this->statisticsGet($node->id());
 
         // Set the weight on all the configured fields.
         foreach ($fields as $field) {
@@ -148,9 +145,9 @@ class Statistics extends ProcessorPluginBase implements PluginFormInterface {
   /**
    * Retrieves a node's "view statistics".
    *
-   * see statistics.module
+   * See statistics.module.
    */
-  function statistics_get($id) {
+  public function statisticsGet($id) {
     if ($id > 0) {
       /** @var \Drupal\statistics\StatisticsViewsResult $statistics */
       $statistics = \Drupal::service('statistics.storage.node')->fetchView($id);

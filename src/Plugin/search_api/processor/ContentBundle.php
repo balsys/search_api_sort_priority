@@ -126,7 +126,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
 
     // Get a list of available bundle_types defined on this index.
     $datasources = $this->index->getDatasources();
-    foreach ($datasources as $datasource_id => $datasource) {
+    foreach ($datasources as $datasource) {
       // TODO Maybe this can be extended for non Node types?
       if ($datasource->getEntityTypeId() == 'node') {
         if ($bundles = $datasource->getBundles()) {

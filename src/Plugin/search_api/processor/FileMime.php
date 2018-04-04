@@ -127,7 +127,7 @@ class FileMime extends ProcessorPluginBase implements PluginFormInterface {
     // Get a list of available bundle_types defined on this index.
     $datasources = $this->index->getDatasources();
 
-    foreach ($datasources as $datasource_id => $datasource) {
+    foreach ($datasources as $datasource) {
       if ($datasource->getEntityTypeId() == 'file') {
 
         $mimeTypes = $this->getAvailableMimes();
@@ -196,7 +196,10 @@ class FileMime extends ProcessorPluginBase implements PluginFormInterface {
   }
 
   /**
+   * Get a list of mimes for all files.
+   *
    * @return array
+   *   Return a mime list.
    */
   private function getAvailableMimes() {
     $mimeTypes = [];
@@ -209,10 +212,11 @@ class FileMime extends ProcessorPluginBase implements PluginFormInterface {
       ->execute();
     $results = $query->fetchAll();
 
-    foreach($results as $result) {
+    foreach ($results as $result) {
       $mimeTypes[] = $result->filemime;
     }
 
     return $mimeTypes;
   }
+
 }

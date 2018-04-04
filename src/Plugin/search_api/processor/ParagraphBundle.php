@@ -126,7 +126,7 @@ class ParagraphBundle extends ProcessorPluginBase implements PluginFormInterface
 
     // Get a list of available bundle_types defined on this index.
     $datasources = $this->index->getDatasources();
-    foreach ($datasources as $datasource_id => $datasource) {
+    foreach ($datasources as $datasource) {
       if ($datasource->getEntityTypeId() == 'paragraph') {
         if ($bundles = $datasource->getBundles()) {
           // Make a dummy array to add custom weight.

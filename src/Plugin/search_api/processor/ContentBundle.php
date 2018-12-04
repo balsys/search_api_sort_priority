@@ -82,7 +82,7 @@ class ContentBundle extends ProcessorPluginBase implements PluginFormInterface {
       $bundle_type = $item->getDatasource()->getItemBundle($item->getOriginalObject());
 
       // Get the weight assigned to content type.
-      if ($this->configuration['sorttable'][$bundle_type]['weight']) {
+      if (isset($this->configuration['sorttable'][$bundle_type]) && $this->configuration['sorttable'][$bundle_type]['weight']) {
         $weight = $this->configuration['sorttable'][$bundle_type]['weight'];
       }
 

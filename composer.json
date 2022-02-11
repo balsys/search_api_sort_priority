@@ -1,6 +1,7 @@
 {
     "name": "vbalsys/search_api_sort_priority",
     "description": "Define custom sort priority based on number of criteria",
-    "type": "module",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
     "require": {}
 }
